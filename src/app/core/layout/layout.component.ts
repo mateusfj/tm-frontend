@@ -3,11 +3,12 @@ import { NgClass } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [NgClass, RouterOutlet, HeaderComponent, SidebarComponent],
+  imports: [NgClass, RouterOutlet, HeaderComponent, SidebarComponent, ToastModule],
   templateUrl: './layout.component.html',
 })
 export class LayoutComponent implements OnInit {

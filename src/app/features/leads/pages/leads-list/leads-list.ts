@@ -8,16 +8,18 @@ import { ToastService } from '../../../../shared/services/toast/toast.service';
 import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { LEAD_STATUS_LABEL_MAP } from '../../constants/status';
-
+import { DialogModule } from 'primeng/dialog';
+import { LeadsForm } from '../../components/leads-form/leads-form';
 @Component({
   selector: 'app-leads',
   standalone: true,
-  imports: [PageHeaderComponent, TableModule, RouterLink, Button],
+  imports: [PageHeaderComponent, TableModule, RouterLink, Button, DialogModule, LeadsForm],
   templateUrl: './leads-list.html',
 })
 export class LeadsList {
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
+  visible: boolean = false;
 
   leads = resource({
     loader: async (): Promise<LeadUI[]> => {
@@ -30,9 +32,17 @@ export class LeadsList {
     defaultValue: [],
   });
 
-  deleteLead(id: string) {
+  handelShowDialog() {
+    this.visible = true;
+  }
+
+  handleClose() {
+    this.visible = false;
+    this.leads.reload();
+  }
+
+  handleDeleteLead(id: string) {
     this.leadsService.deleteLead(id).then(() => {
-      console.log('Lead deleted:', id);
       this.toastService.success('Lead deletado com sucesso.');
       this.leads.reload();
     });
@@ -41,9 +51,8 @@ export class LeadsList {
   columns: DataTableColumn<LeadUI>[] = [
     { field: 'name', header: 'Nome' },
     { field: 'cpf', header: 'CPF' },
+    { field: 'phone', header: 'Contato' },
+    { field: 'city', header: 'Município' },
     { field: 'status', header: 'Status' },
-    { field: 'phone', header: 'Telefone' },
-    { field: 'email', header: 'Email' },
-    { field: 'city', header: 'Cidade' },
   ];
 }

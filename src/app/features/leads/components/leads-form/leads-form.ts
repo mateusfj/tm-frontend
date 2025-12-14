@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { CardModule } from 'primeng/card';
-import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { LeadsService } from '../../services/leads-service';
 import { ILeadCreate, LeadStatusEnum } from '../../types/leads';
 import { InputMask } from 'primeng/inputmask';
@@ -23,7 +22,6 @@ import { LEAD_STATUS_OPTIONS } from '../../constants/status';
     ButtonModule,
     MessageModule,
     CardModule,
-    PageHeaderComponent,
     InputMask,
     TextareaModule,
     SelectModule,
@@ -35,11 +33,13 @@ export class LeadsForm {
   toastService = inject(ToastService);
   router = inject(Router);
   route = inject(ActivatedRoute);
-  leadId: string | null = null;
+
+  @Input() leadId: string | null = null;
+  @Output() close = new EventEmitter<void>();
+
   statusOptions = LEAD_STATUS_OPTIONS;
 
-  constructor() {
-    this.leadId = this.route.snapshot.paramMap.get('id');
+  onNgOnInit() {
     if (this.leadId) {
       this.leadsService
         .getLeadById(this.leadId)
@@ -77,16 +77,6 @@ export class LeadsForm {
     comments: new FormControl<string>('', { nonNullable: true }),
   });
 
-  get pageTitle(): string {
-    return this.leadId ? 'Editar Cliente' : 'Cadastrar Cliente';
-  }
-
-  get pageDescription(): string {
-    return this.leadId
-      ? 'Formulário para editar os dados do cliente'
-      : 'Formulário para cadastrar um novo cliente';
-  }
-
   isInvalid(fieldName: string): boolean {
     const field = this.leadsForm.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
@@ -123,7 +113,7 @@ export class LeadsForm {
           this.toastService.success('Sucesso', 'Cliente cadastrado com sucesso.');
           this.leadsForm.reset();
         }
-        this.router.navigate(['/leads']);
+        this.close.emit();
       })
       .catch((error) => {
         const messages = error?.error?.message;

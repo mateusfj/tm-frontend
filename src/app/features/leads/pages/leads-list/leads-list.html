@@ -7,7 +7,7 @@
   />
 
   <!-- Leads Table -->
-  <p-table [columns]="columns" [value]="leads.value()" [loading]="leads.isLoading()">
+  <p-table [columns]="columns" [value]="leads.value()" [loading]="leads.isLoading()" size="small">
     <ng-template #header let-columns>
       <tr>
         @for (col of columns; track col) {

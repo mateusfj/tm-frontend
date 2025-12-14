@@ -1,0 +1,52 @@
+<p-card>
+  <div class="grid grid-cols-6 gap-4">
+    <div class="flex flex-col col-span-3">
+      <label for="search">Busca</label>
+      <input
+        pInputText
+        id="search"
+        type="text"
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Nome da propriedade"
+      />
+    </div>
+    <div class="flex flex-col">
+      <label for="municipality">Município</label>
+      <input
+        pInputText
+        id="municipality"
+        type="text"
+        [(ngModel)]="municipality"
+        (ngModelChange)="onMunicipalityChange($event)"
+        placeholder="Município"
+      />
+    </div>
+    <div class="flex flex-col">
+      <label for="crop">Cultura</label>
+      <p-select
+        inputId="crop"
+        [(ngModel)]="crop"
+        [options]="cropsOptions"
+        optionLabel="label"
+        optionValue="value"
+        (ngModelChange)="onCropChange($event)"
+        placeholder="Selecione"
+        [showClear]="true"
+      />
+    </div>
+    <div class="flex flex-col">
+      <label for="leadId">Lead ID</label>
+      <p-select
+        inputId="leadId"
+        [(ngModel)]="leadId"
+        [options]="leads"
+        optionLabel="name"
+        optionValue="id"
+        (ngModelChange)="onLeadIdChange($event)"
+        placeholder="Selecione"
+        [showClear]="true"
+      />
+    </div>
+  </div>
+</p-card>

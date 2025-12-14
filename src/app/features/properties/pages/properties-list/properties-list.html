@@ -6,48 +6,66 @@
     title="Propriedades"
   />
 
-  <!-- Properties Table -->
-  <p-table [columns]="columns" [value]="properties.value()" [loading]="properties.isLoading()">
-    <ng-template #header let-columns>
-      <tr>
-        @for (col of columns; track col) {
-        <th>
-          {{ col.header }}
-        </th>
-        }
-        <th>Ações</th>
-      </tr>
-    </ng-template>
+  <!-- Filters Bar -->
+  <app-properties-filters
+    [(search)]="search"
+    [(municipality)]="municipality"
+    [(crop)]="crop"
+    [(leadId)]="lead_id"
+    [cropsOptions]="CROPS"
+    [leads]="leads.value()"
+    (filtersChange)="onFiltersChange()"
+  />
 
-    <ng-template #body let-rowData let-columns="columns">
-      <tr>
-        @for (col of columns; track col) {
-        <td>
-          {{ rowData[col.field] }}
-        </td>
-        }
-        <td class="space-x-2">
-          <p-button
-            severity="primary"
-            variant="text"
-            [routerLink]="['/properties/form', rowData.id]"
-            icon="pi pi-pencil"
-          />
-          <p-button
-            severity="danger"
-            variant="text"
-            (click)="handleDeleteProperty(rowData.id)"
-            icon="pi pi-trash"
-          />
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template #emptymessage>
-      <tr>
-        <td class="text-center!" colspan="6">Nenhum cliente encontrado.</td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <!-- Properties Table -->
+  <p-card>
+    <p-table
+      [columns]="columns"
+      [value]="properties.value()"
+      [loading]="properties.isLoading()"
+      size="small"
+      [globalFilterFields]="['name', 'municipality', 'crop', 'lead_name']"
+    >
+      <ng-template #header let-columns>
+        <tr>
+          @for (col of columns; track col) {
+          <th>
+            {{ col.header }}
+          </th>
+          }
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-rowData let-columns="columns">
+        <tr>
+          @for (col of columns; track col) {
+          <td>
+            {{ rowData[col.field] }}
+          </td>
+          }
+          <td class="space-x-2">
+            <p-button
+              severity="primary"
+              variant="text"
+              [routerLink]="['/properties/form', rowData.id]"
+              icon="pi pi-pencil"
+            />
+            <p-button
+              severity="danger"
+              variant="text"
+              (click)="handleDeleteProperty(rowData.id)"
+              icon="pi pi-trash"
+            />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td class="text-center!" colspan="6">Nenhum cliente encontrado.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
 
   <!-- Dialog Form -->
   <p-dialog header="Cadastrar Propriedade" [modal]="true" [(visible)]="visible">

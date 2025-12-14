@@ -39,7 +39,7 @@ export class LeadsForm {
 
   statusOptions = LEAD_STATUS_OPTIONS;
 
-  onNgOnInit() {
+  ngOnInit() {
     if (this.leadId) {
       this.leadsService
         .getLeadById(this.leadId)

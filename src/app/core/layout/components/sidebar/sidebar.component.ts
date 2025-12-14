@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { SIDEBAR_ITEMS } from '../../constants/sidebarItems';
 
 const COMPONENTS = [ButtonModule];
 @Component({
@@ -10,10 +11,7 @@ const COMPONENTS = [ButtonModule];
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent {
-  sidebarItems = [
-    { label: 'Dashboard', icon: 'pi pi-home', route: '/' },
-    { label: 'Clientes', icon: 'pi pi-users', route: '/leads' },
-  ];
+  sidebarItems = SIDEBAR_ITEMS;
   @Input() isOpen = true;
   @Input() isDesktop = false;
   @Output() readonly requestClose = new EventEmitter<void>();

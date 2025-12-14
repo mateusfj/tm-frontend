@@ -1,0 +1,81 @@
+<form class="space-y-4" [formGroup]="propertiesForm" (ngSubmit)="onSubmit()">
+  <!-- Lead ID -->
+  <div class="flex flex-col gap-2">
+    <label for="leadId" class="font-medium">Proprietário *</label>
+    <p-select
+      [options]="leads.value()"
+      formControlName="leadId"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Selecione o Proprietário"
+    />
+    @if (isInvalid('leadId')) {
+    <p-message severity="error" size="small" variant="simple"
+      >Proprietário é obrigatório.</p-message
+    >
+    }
+  </div>
+
+  <!-- Cultura -->
+  <div class="flex flex-col gap-2">
+    <label for="crop" class="font-medium">Cultura *</label>
+    <p-select
+      [options]="crops"
+      formControlName="crop"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Selecione a Cultura"
+    />
+    @if (isInvalid('crop')) {
+    <p-message severity="error" size="small" variant="simple">Cultura é obrigatória.</p-message>
+    }
+  </div>
+
+  <!-- Área -->
+  <div class="flex flex-col gap-2">
+    <label for="area" class="font-medium">Área (ha) *</label>
+    <input
+      pInputText
+      type="number"
+      step="0.01"
+      id="area"
+      placeholder="100.5"
+      formControlName="area"
+      [class.ng-invalid]="isInvalid('area')"
+    />
+    @if (isInvalid('area')) {
+    <p-message severity="error" size="small" variant="simple"
+      >Área é obrigatória e deve ser maior que 0.</p-message
+    >
+    }
+  </div>
+
+  <!-- Geometry -->
+  <div class="flex flex-col gap-2">
+    <label for="geometry" class="font-medium">Geometry (GeoJSON) *</label>
+    <textarea
+      pTextarea
+      id="geometry"
+      rows="4"
+      placeholder='{"type":"Polygon","coordinates":[...]}'
+      formControlName="geometry"
+      [class.ng-invalid]="isInvalid('geometry')"
+    ></textarea>
+    @if (isInvalid('geometry')) { @if (propertiesForm.get('geometry')?.errors?.['required']) {
+    <p-message severity="error" size="small" variant="simple">Geometry é obrigatória.</p-message>
+    } @if (propertiesForm.get('geometry')?.errors?.['invalidJson']) {
+    <p-message severity="error" size="small" variant="simple"
+      >Geometry deve ser um JSON válido.</p-message
+    >
+    } @if (propertiesForm.get('geometry')?.errors?.['invalidPolygon']) {
+    <p-message severity="error" size="small" variant="simple"
+      >Geometry deve conter coordinates (e, se houver type, deve ser Polygon).</p-message
+    >
+    } }
+  </div>
+
+  <div class="flex gap-4">
+    <button pButton type="submit" label="Salvar" icon="pi pi-check"></button>
+    <button pButton type="button" label="Cancelar" icon="pi pi-times" (click)="onCancel()"></button>
+  </div>
+</form>

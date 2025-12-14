@@ -1,0 +1,39 @@
+<p-card>
+  <div class="mb-4">
+    <h1 class="font-semibold text-lg">Filtros</h1>
+    <p class="text-muted-color">Refine sua busca de clientes</p>
+  </div>
+
+  <div class="grid grid-cols-6 gap-4">
+    <div class="flex flex-col col-span-4">
+      <input
+        pInputText
+        id="search"
+        type="text"
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Nome do cliente"
+      />
+    </div>
+
+    <p-select
+      inputId="status"
+      [(ngModel)]="status"
+      [options]="statusOptions"
+      optionLabel="label"
+      optionValue="value"
+      (ngModelChange)="onStatusChange($event)"
+      placeholder="Selecione"
+      [showClear]="true"
+    />
+
+    <input
+      pInputText
+      id="municipality"
+      type="text"
+      [(ngModel)]="municipality"
+      (ngModelChange)="onMunicipalityChange($event)"
+      placeholder="Município"
+    />
+  </div>
+</p-card>

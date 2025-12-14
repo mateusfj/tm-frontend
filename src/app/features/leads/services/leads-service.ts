@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
-import { ILeadCreate, ILeads } from '../types/leads';
+import { ILeadCreate, ILeads, LeadStatusEnum } from '../types/leads';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +10,28 @@ import { ILeadCreate, ILeads } from '../types/leads';
 export class LeadsService {
   constructor(private http: HttpClient) {}
 
-  getLeads(): Promise<ILeads[]> {
-    return firstValueFrom(this.http.get<ILeads[]>(`${environment.apiUrl}/leads`));
+  getLeads(params?: {
+    search?: string;
+    status?: LeadStatusEnum;
+    municipality?: string;
+  }): Promise<ILeads[]> {
+    const query: Record<string, string> = {};
+
+    if (params?.search) {
+      query['search'] = params.search;
+    }
+    if (params?.status) {
+      query['status'] = params.status;
+    }
+    if (params?.municipality) {
+      query['municipality'] = params.municipality;
+    }
+
+    return firstValueFrom(
+      this.http.get<ILeads[]>(`${environment.apiUrl}/leads`, {
+        params: query,
+      })
+    );
   }
 
   getLeadById(id: string): Promise<ILeads> {

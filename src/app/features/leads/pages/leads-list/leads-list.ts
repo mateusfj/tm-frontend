@@ -1,18 +1,20 @@
 import { Component, inject, resource } from '@angular/core';
 import { LeadsService } from '../../services/leads-service';
-import { ILeads, LeadUI } from '../../types/leads';
+import { ILeads, LeadStatusEnum, LeadUI } from '../../types/leads';
 import { TableModule } from 'primeng/table';
 import { DataTableColumn } from '../../../../shared/components/data-table/data-table.types';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast/toast.service';
 import { Button } from 'primeng/button';
-import { LEAD_STATUS_LABEL_MAP } from '../../constants/status';
 import { DialogModule } from 'primeng/dialog';
+import { LEAD_STATUS_LABEL_MAP, LEAD_STATUS_OPTIONS } from '../../constants/status';
 import { LeadsForm } from '../../components/leads-form/leads-form';
+import { LeadsFilters } from '../../components/leads-filters/leads-filters';
+import { Card } from 'primeng/card';
 @Component({
   selector: 'app-leads',
   standalone: true,
-  imports: [PageHeaderComponent, TableModule, Button, DialogModule, LeadsForm],
+  imports: [PageHeaderComponent, TableModule, Button, DialogModule, LeadsForm, LeadsFilters, Card],
   templateUrl: './leads-list.html',
 })
 export class LeadsList {
@@ -22,9 +24,19 @@ export class LeadsList {
 
   leadId: string | null = null;
 
+  search: string = '';
+  status?: LeadStatusEnum;
+  municipality: string = '';
+
+  statusOptions = LEAD_STATUS_OPTIONS;
+
   leads = resource({
     loader: async (): Promise<LeadUI[]> => {
-      const data: ILeads[] = await this.leadsService.getLeads();
+      const data: ILeads[] = await this.leadsService.getLeads({
+        search: this.search || undefined,
+        status: this.status || undefined,
+        municipality: this.municipality || undefined,
+      });
       return data.map((lead: ILeads) => ({
         ...lead,
         status: LEAD_STATUS_LABEL_MAP[lead.status],
@@ -64,4 +76,8 @@ export class LeadsList {
     { field: 'city', header: 'Município' },
     { field: 'status', header: 'Status' },
   ];
+
+  onFiltersChange(): void {
+    this.leads.reload();
+  }
 }

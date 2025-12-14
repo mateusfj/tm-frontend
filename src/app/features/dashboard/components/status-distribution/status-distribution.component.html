@@ -1,0 +1,14 @@
+<div class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+  <h4 class="text-base font-semibold mb-2">Leads por Status</h4>
+  <div class="space-y-2">
+    <div *ngFor="let item of data" class="space-y-1">
+      <div class="flex justify-between text-sm">
+        <span>{{ item.label }}</span>
+        <span>{{ item.count }} ({{ item.percentage }}%)</span>
+      </div>
+      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-full bg-green-500" [style.width.%]="item.percentage"></div>
+      </div>
+    </div>
+  </div>
+</div>

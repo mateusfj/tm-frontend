@@ -1,3 +1,38 @@
-<p>{{ meuNome }}</p>
+<div class="flex flex-col gap-4">
+  <app-page-header title="Dashboard" description="Visão geral do sistema"></app-page-header>
 
-<p-button label="Click Me" (onClick)="toggleAdmin()"></p-button>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <app-header-link-card
+      title="Gerenciar Leads"
+      description="Visualize e organize seus contatos"
+      route="/leads"
+    />
+    <app-header-link-card
+      title="Propriedades Rurais"
+      description="Cadastro de fazendas e áreas"
+      route="/properties"
+    />
+
+    <app-stat-card
+      title="Total de Leads"
+      [value]="totalLeads"
+      subtitle="Leads cadastrados no sistema"
+    />
+    <app-stat-card
+      title="Leads Prioritários"
+      [value]="prioritizedLeads"
+      subtitle="Propriedades > 100 hectares"
+    />
+    <app-stat-card
+      title="Área Total"
+      [value]="totalArea + ' ha'"
+      subtitle="Soma das propriedades"
+    />
+    <app-stat-card title="Municípios" [value]="municipalitiesCount" subtitle="Regiões de atuação" />
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <app-status-distribution [data]="statusDistribution"></app-status-distribution>
+    <app-top-cities [cities]="topCities"></app-top-cities>
+  </div>
+</div>

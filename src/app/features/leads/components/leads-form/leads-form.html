@@ -10,15 +10,14 @@
         id="name"
         placeholder="Digite o nome completo"
         formControlName="name"
-        [class.ng-invalid]="isInvalid('name')"
       />
-      @if (isInvalid('name')) { @if (leadsForm.get('name')?.errors?.['required']) {
+      @if (submitted && leadsForm.get('name')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple">Nome é obrigatório.</p-message>
-      } @if (leadsForm.get('name')?.errors?.['minlength']) {
+      } @if (submitted && leadsForm.get('name')?.errors?.['minlength']) {
       <p-message severity="error" size="small" variant="simple"
         >Nome deve ter pelo menos 3 caracteres.</p-message
       >
-      } }
+      }
     </div>
 
     <!-- Email -->
@@ -30,13 +29,12 @@
         id="email"
         placeholder="Digite o email"
         formControlName="email"
-        [class.ng-invalid]="isInvalid('email')"
       />
-      @if (isInvalid('email')) { @if (leadsForm.get('email')?.errors?.['required']) {
+      @if (submitted && leadsForm.get('email')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple">Email é obrigatório.</p-message>
-      } @if (leadsForm.get('email')?.errors?.['email']) {
+      } @if (submitted && leadsForm.get('email')?.errors?.['email']) {
       <p-message severity="error" size="small" variant="simple">Email inválido.</p-message>
-      } }
+      }
     </div>
   </div>
 
@@ -50,10 +48,9 @@
         mask="999.999.999-99"
         placeholder="000.000.000-00"
         formControlName="cpf"
-        [class.ng-invalid]="isInvalid('cpf')"
         styleClass="w-full"
       />
-      @if (isInvalid('cpf')) {
+      @if (submitted && leadsForm.get('cpf')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple">CPF é obrigatório.</p-message>
       }
     </div>
@@ -66,11 +63,10 @@
         id="phone"
         placeholder="(00) 00000-0000"
         formControlName="phone"
-        [class.ng-invalid]="isInvalid('phone')"
         styleClass="w-full"
         mask="(99) 99999-9999"
       />
-      @if (isInvalid('phone')) {
+      @if (submitted && leadsForm.get('phone')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple">Telefone é obrigatório.</p-message>
       }
     </div>
@@ -85,7 +81,7 @@
         optionValue="value"
         placeholder="Selecione um status"
       />
-      @if (isInvalid('status')) {
+      @if (submitted && leadsForm.get('status')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple">Status é obrigatório.</p-message>
       }
     </div>
@@ -93,17 +89,17 @@
 
   <!-- Cidade -->
   <div class="flex flex-col gap-2">
-    <label for="city" class="font-medium">Cidade *</label>
-    <input
-      pInputText
-      type="text"
-      id="city"
-      placeholder="Digite a cidade"
+    <label for="city" class="font-medium">Município *</label>
+    <p-select
+      [options]="municipalities.value()"
       formControlName="city"
-      [class.ng-invalid]="isInvalid('city')"
+      optionLabel="nome"
+      optionValue="nome"
+      placeholder="Selecionar município"
+      [loading]="municipalities.isLoading()"
     />
-    @if (isInvalid('city')) {
-    <p-message severity="error" size="small" variant="simple">Cidade é obrigatória.</p-message>
+    @if (submitted && leadsForm.get('city')?.errors?.['required'] ) {
+    <p-message severity="error" size="small" variant="simple">Município é obrigatório.</p-message>
     }
   </div>
 
@@ -125,9 +121,10 @@
     <button
       pButton
       type="button"
+      severity="danger"
       label="Cancelar"
       icon="pi pi-times"
-      (click)="leadsForm.reset()"
+      (click)="onClose()"
     ></button>
   </div>
 </form>

@@ -25,6 +25,7 @@ export class PropertiesFilters {
 
   @Input() cropsOptions: Array<{ label: string; value: string }> = [];
   @Input() leads: Array<{ id: string; name: string }> = [];
+  @Input() municipalities: Array<{ label: string; value: string }> = [];
 
   @Output() filtersChange = new EventEmitter<void>();
 

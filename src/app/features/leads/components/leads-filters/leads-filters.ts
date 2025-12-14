@@ -23,6 +23,7 @@ export class LeadsFilters {
   @Output() municipalityChange = new EventEmitter<string>();
 
   @Input() statusOptions: Array<{ label: string; value: LeadStatusEnum }> = [];
+  @Input() municipalityOptions: Array<{ label: string; value: string }> = [];
 
   @Output() filtersChange = new EventEmitter<void>();
 

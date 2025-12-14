@@ -14,6 +14,7 @@ import { ILeads } from '../../../leads/types/leads';
 import { LeadsService } from '../../../leads/services/leads-service';
 import { CROPS } from '../../constants/crops';
 import { PROPERTY_TYPE } from '../../constants/property-type';
+import { Municipalities } from '../../../../shared/services/municipios/municipalities';
 
 @Component({
   selector: 'app-properties-form',
@@ -29,12 +30,13 @@ import { PROPERTY_TYPE } from '../../constants/property-type';
   ],
   templateUrl: './properties-form.html',
 })
-export class PropertiesForm implements OnInit {
+export class PropertiesForm {
   leadsService = inject(LeadsService);
   propertiesService = inject(PropertiesService);
   toastService = inject(ToastService);
   router = inject(Router);
   route: ActivatedRoute = inject(ActivatedRoute);
+  municipalitiesService: Municipalities = inject(Municipalities);
 
   @Input() propertyId: string | null = null;
   @Input() leadId: string | null = null;
@@ -42,11 +44,23 @@ export class PropertiesForm implements OnInit {
 
   crops: typeof CROPS = CROPS;
   propertyTypes: typeof PROPERTY_TYPE = PROPERTY_TYPE;
+  submitted: boolean = false;
 
   leads = resource({
     loader: async (): Promise<{ label: string; value: string }[]> => {
       const leads: ILeads[] = await this.leadsService.getLeads();
       return leads.map((lead: ILeads) => ({ label: lead.name, value: lead.id }));
+    },
+    defaultValue: [],
+  });
+
+  municipalities = resource({
+    loader: async (): Promise<Array<{ label: string; value: string }>> => {
+      const data = await this.municipalitiesService.getMunicipalities();
+      return data.map((municipality: { id: number; nome: string }) => ({
+        label: municipality.nome,
+        value: municipality.nome,
+      }));
     },
     defaultValue: [],
   });
@@ -77,19 +91,10 @@ export class PropertiesForm implements OnInit {
     }),
   });
 
-  ngOnInit(): void {
-    const leadIdFromQuery = this.route.snapshot.queryParamMap.get('leadId');
-    const effectiveLeadId = this.leadId ?? leadIdFromQuery;
-    if (effectiveLeadId) {
-      this.propertiesForm.controls.leadId.setValue(effectiveLeadId);
-    }
-
-    const routeId = this.route.snapshot.paramMap.get('id');
-    const effectivePropertyId = this.propertyId ?? routeId;
-
-    if (effectivePropertyId) {
+  ngOnChanges(): void {
+    if (this.propertyId) {
       this.propertiesService
-        .getPropertyById(effectivePropertyId)
+        .getPropertyById(this.propertyId)
         .then((property: IProperty) => {
           this.propertiesForm.setValue({
             leadId: property.lead_id,
@@ -107,12 +112,9 @@ export class PropertiesForm implements OnInit {
     }
   }
 
-  isInvalid(fieldName: string): boolean {
-    const field = this.propertiesForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
-  }
-
   onSubmit(): void {
+    this.submitted = true;
+
     if (this.propertiesForm.invalid) {
       this.propertiesForm.markAllAsTouched();
       return;
@@ -123,29 +125,26 @@ export class PropertiesForm implements OnInit {
     const data: IPropertyCreate = {
       lead_id: raw.leadId,
       crop: raw.crop as Crop,
-      area: raw.area as number,
+      area: Number(raw.area),
       name: raw.name,
       property_type: raw.property_type as PropertyType,
       municipality: raw.municipality,
     };
 
-    const routeId = this.route.snapshot.paramMap.get('id');
-    const effectivePropertyId = this.propertyId ?? routeId;
-
-    const request = effectivePropertyId
-      ? this.propertiesService.updateProperty(effectivePropertyId, data)
+    const request = this.propertyId
+      ? this.propertiesService.updateProperty(this.propertyId, data)
       : this.propertiesService.createProperty(data);
 
     request
       .then(() => {
-        if (effectivePropertyId) {
+        if (this.propertyId) {
           this.toastService.success('Sucesso', 'Propriedade atualizada com sucesso.');
         } else {
           this.toastService.success('Sucesso', 'Propriedade cadastrada com sucesso.');
           this.propertiesForm.reset();
           if (this.leadId) this.propertiesForm.controls.leadId.setValue(this.leadId);
         }
-        this.close.emit();
+        this.onClose();
       })
       .catch((error) => {
         const messages = error?.error?.message;
@@ -157,7 +156,8 @@ export class PropertiesForm implements OnInit {
       });
   }
 
-  onCancel(): void {
+  onClose(): void {
+    this.submitted = false;
     this.propertiesForm.reset();
     this.close.emit();
   }

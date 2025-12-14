@@ -11,6 +11,7 @@ import { LEAD_STATUS_LABEL_MAP, LEAD_STATUS_OPTIONS } from '../../constants/stat
 import { LeadsForm } from '../../components/leads-form/leads-form';
 import { LeadsFilters } from '../../components/leads-filters/leads-filters';
 import { Card } from 'primeng/card';
+import { Municipalities } from '../../../../shared/services/municipios/municipalities';
 @Component({
   selector: 'app-leads',
   standalone: true,
@@ -20,6 +21,7 @@ import { Card } from 'primeng/card';
 export class LeadsList {
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
+  municipalitiesService = inject(Municipalities);
   visible: boolean = false;
 
   leadId: string | null = null;
@@ -29,6 +31,17 @@ export class LeadsList {
   municipality: string = '';
 
   statusOptions = LEAD_STATUS_OPTIONS;
+
+  municipalities = resource({
+    loader: async (): Promise<Array<{ label: string; value: string }>> => {
+      const data = await this.municipalitiesService.getMunicipalities();
+      return data.map((municipality: { id: number; nome: string }) => ({
+        label: municipality.nome,
+        value: municipality.nome,
+      }));
+    },
+    defaultValue: [],
+  });
 
   leads = resource({
     loader: async (): Promise<LeadUI[]> => {
@@ -48,8 +61,10 @@ export class LeadsList {
   handelShowDialog(): void {
     this.visible = true;
   }
+
   handleClose(): void {
     this.visible = false;
+    this.leadId = null;
     this.leads.reload();
   }
 

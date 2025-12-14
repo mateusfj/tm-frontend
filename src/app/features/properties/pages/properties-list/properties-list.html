@@ -15,6 +15,7 @@
     [cropsOptions]="CROPS"
     [leads]="leads.value()"
     (filtersChange)="onFiltersChange()"
+    [municipalities]="municipalities.value()"
   />
 
   <!-- Properties Table -->
@@ -24,7 +25,6 @@
       [value]="properties.value()"
       [loading]="properties.isLoading()"
       size="small"
-      [globalFilterFields]="['name', 'municipality', 'crop', 'lead_name']"
     >
       <ng-template #header let-columns>
         <tr>
@@ -47,7 +47,7 @@
             <p-button
               severity="primary"
               variant="text"
-              [routerLink]="['/properties/form', rowData.id]"
+              (click)="handleEditProperty(rowData.id)"
               icon="pi pi-pencil"
             />
             <p-button
@@ -68,7 +68,13 @@
   </p-card>
 
   <!-- Dialog Form -->
-  <p-dialog header="Cadastrar Propriedade" [modal]="true" [(visible)]="visible">
-    <app-properties-form (close)="handleClose()"></app-properties-form>
+  <p-dialog
+    header="Cadastrar Propriedade"
+    [modal]="true"
+    [(visible)]="visible"
+    [closable]="false"
+    [style]="{ width: '500px' }"
+  >
+    <app-properties-form [propertyId]="property_id" (close)="handleClose()"></app-properties-form>
   </p-dialog>
 </div>

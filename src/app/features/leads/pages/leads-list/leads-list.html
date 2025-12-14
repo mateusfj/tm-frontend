@@ -12,6 +12,7 @@
     [(municipality)]="municipality"
     [statusOptions]="statusOptions"
     (filtersChange)="onFiltersChange()"
+    [municipalityOptions]="municipalities.value()"
   />
 
   <!-- Leads Table -->
@@ -59,7 +60,7 @@
   </p-card>
 
   <!-- Dialog Form -->
-  <p-dialog header="Cadastrar Cliente" [modal]="true" [(visible)]="visible">
+  <p-dialog header="Cadastrar Cliente" [modal]="true" [(visible)]="visible" closable="false">
     <app-leads-form (close)="handleClose()" [leadId]="leadId"></app-leads-form>
   </p-dialog>
 </div>

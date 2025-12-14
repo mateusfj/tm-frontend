@@ -8,9 +8,8 @@
       id="name"
       placeholder="Nome da Propriedade"
       formControlName="name"
-      [class.ng-invalid]="isInvalid('name')"
     />
-    @if (isInvalid('name')) {
+    @if (submitted && propertiesForm.get('name')?.errors?.['required']) {
     <p-message severity="error" size="small" variant="simple"
       >Nome da Propriedade é obrigatório.</p-message
     >
@@ -24,14 +23,31 @@
       formControlName="leadId"
       optionLabel="label"
       optionValue="value"
-      placeholder="Selecione o Proprietário"
+      placeholder="Selecionar"
     />
-    @if (isInvalid('leadId')) {
+    @if (submitted && propertiesForm.get('leadId')?.errors?.['required']) {
     <p-message severity="error" size="small" variant="simple"
       >Proprietário é obrigatório.</p-message
     >
     }
   </div>
+  <!-- Município -->
+  <div class="flex flex-col gap-2">
+    <label for="municipality" class="font-medium">Município *</label>
+    <p-select
+      [options]="municipalities.value()"
+      formControlName="municipality"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Selecionar"
+      [loading]="municipalities.isLoading()"
+      [showClear]="true"
+    />
+    @if (submitted && propertiesForm.get('municipality')?.errors?.['required']) {
+    <p-message severity="error" size="small" variant="simple">Município é obrigatório.</p-message>
+    }
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Cultura -->
     <div class="flex flex-col gap-2">
@@ -41,9 +57,9 @@
         formControlName="crop"
         optionLabel="label"
         optionValue="value"
-        placeholder="Selecione a Cultura"
+        placeholder="Selecionar"
       />
-      @if (isInvalid('crop')) {
+      @if (submitted && propertiesForm.get('crop')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple">Cultura é obrigatória.</p-message>
       }
     </div>
@@ -57,9 +73,9 @@
         formControlName="property_type"
         optionLabel="label"
         optionValue="value"
-        placeholder="Selecione o Tipo de Propriedade"
+        placeholder="Selecionar"
       />
-      @if (isInvalid('property_type')) {
+      @if (submitted && propertiesForm.get('property_type')?.errors?.['required']) {
       <p-message severity="error" size="small" variant="simple"
         >Tipo de Propriedade é obrigatório.</p-message
       >
@@ -77,33 +93,23 @@
       id="area"
       placeholder="100.5"
       formControlName="area"
-      [class.ng-invalid]="isInvalid('area')"
     />
-    @if (isInvalid('area')) {
+    @if (submitted && propertiesForm.get('area')?.errors) {
     <p-message severity="error" size="small" variant="simple"
       >Área é obrigatória e deve ser maior que 0.</p-message
     >
     }
   </div>
 
-  <!-- Município -->
-  <div class="flex flex-col gap-2">
-    <label for="municipality" class="font-medium">Município *</label>
-    <input
-      pInputText
-      type="text"
-      id="municipality"
-      placeholder="Município"
-      formControlName="municipality"
-      [class.ng-invalid]="isInvalid('municipality')"
-    />
-    @if (isInvalid('municipality')) {
-    <p-message severity="error" size="small" variant="simple">Município é obrigatório.</p-message>
-    }
-  </div>
-
   <div class="flex gap-4">
     <button pButton type="submit" label="Salvar" icon="pi pi-check"></button>
-    <button pButton type="button" label="Cancelar" icon="pi pi-times" (click)="onCancel()"></button>
+    <button
+      pButton
+      type="button"
+      severity="danger"
+      label="Cancelar"
+      icon="pi pi-times"
+      (click)="onClose()"
+    ></button>
   </div>
 </form>

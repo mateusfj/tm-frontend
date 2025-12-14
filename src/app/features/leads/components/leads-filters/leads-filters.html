@@ -23,17 +23,19 @@
       optionLabel="label"
       optionValue="value"
       (ngModelChange)="onStatusChange($event)"
-      placeholder="Selecione"
+      placeholder="Selecione o status"
       [showClear]="true"
     />
 
-    <input
-      pInputText
-      id="municipality"
-      type="text"
+    <p-select
+      inputId="municipality"
       [(ngModel)]="municipality"
+      [options]="municipalityOptions"
+      optionLabel="label"
+      optionValue="value"
       (ngModelChange)="onMunicipalityChange($event)"
-      placeholder="Município"
+      placeholder="Selecione o município"
+      [showClear]="true"
     />
   </div>
 </p-card>

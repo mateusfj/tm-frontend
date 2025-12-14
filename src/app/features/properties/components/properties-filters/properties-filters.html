@@ -15,13 +15,15 @@
       />
     </div>
 
-    <input
-      pInputText
-      id="municipality"
-      type="text"
+    <p-select
+      inputId=" municipality"
       [(ngModel)]="municipality"
+      [options]="municipalities"
+      optionLabel="label"
+      optionValue="value"
       (ngModelChange)="onMunicipalityChange($event)"
-      placeholder="Município"
+      placeholder="Selecione o município"
+      [showClear]="true"
     />
 
     <p-select
@@ -31,7 +33,7 @@
       optionLabel="label"
       optionValue="value"
       (ngModelChange)="onCropChange($event)"
-      placeholder="Selecione"
+      placeholder="Selecione a cultura"
       [showClear]="true"
     />
 
@@ -42,7 +44,7 @@
       optionLabel="name"
       optionValue="id"
       (ngModelChange)="onLeadIdChange($event)"
-      placeholder="Selecione"
+      placeholder="Selecione o proprietário"
       [showClear]="true"
     />
   </div>

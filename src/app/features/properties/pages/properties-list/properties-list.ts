@@ -1,5 +1,4 @@
 import { Component, inject, resource } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
@@ -17,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { LeadsService } from '../../../leads/services/leads-service';
 import { ILeads } from '../../../leads/types/leads';
 import { Card } from 'primeng/card';
+import { Municipalities } from '../../../../shared/services/municipios/municipalities';
 
 @Component({
   selector: 'app-properties',
@@ -24,7 +24,6 @@ import { Card } from 'primeng/card';
   imports: [
     PageHeaderComponent,
     TableModule,
-    RouterLink,
     Button,
     DialogModule,
     PropertiesForm,
@@ -40,8 +39,10 @@ export class PropertiesList {
   propertiesService = inject(PropertiesService);
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
+  municipalitiesService = inject(Municipalities);
 
   visible: boolean = false;
+  property_id: string | null = null;
 
   CROPS: typeof CROPS = CROPS;
   search: string = '';
@@ -53,6 +54,17 @@ export class PropertiesList {
     loader: async (): Promise<Array<{ id: string; name: string }>> => {
       const leads: ILeads[] = await this.leadsService.getLeads();
       return leads.map((lead: ILeads) => ({ id: lead.id, name: lead.name }));
+    },
+    defaultValue: [],
+  });
+
+  municipalities = resource({
+    loader: async (): Promise<Array<{ label: string; value: string }>> => {
+      const data = await this.municipalitiesService.getMunicipalities();
+      return data.map((municipality: { id: number; nome: string }) => ({
+        label: municipality.nome,
+        value: municipality.nome,
+      }));
     },
     defaultValue: [],
   });
@@ -76,8 +88,8 @@ export class PropertiesList {
   });
 
   columns: Array<{ field: keyof PropertyUI; header: string }> = [
-    { field: 'lead_name', header: 'Lead ID' },
     { field: 'name', header: 'Nome' },
+    { field: 'lead_name', header: 'Proprietário' },
     { field: 'property_type', header: 'Tipo de Propriedade' },
     { field: 'crop', header: 'Cultura' },
     { field: 'area', header: 'Área' },
@@ -89,8 +101,14 @@ export class PropertiesList {
   }
 
   handleClose(): void {
+    this.property_id = null;
     this.visible = false;
     this.properties.reload();
+  }
+
+  handleEditProperty(id: string) {
+    this.property_id = id;
+    this.handelShowDialog();
   }
 
   handleDeleteProperty(id: string) {
@@ -100,7 +118,6 @@ export class PropertiesList {
     });
   }
 
-  // Trigger reload when any filter changes
   onFiltersChange(): void {
     this.properties.reload();
   }

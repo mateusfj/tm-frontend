@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, resource } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -12,6 +12,7 @@ import { SelectModule } from 'primeng/select';
 import { ToastService } from '../../../../shared/services/toast/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LEAD_STATUS_OPTIONS } from '../../constants/status';
+import { Municipalities } from '../../../../shared/services/municipios/municipalities';
 
 @Component({
   selector: 'app-leads-form',
@@ -33,13 +34,15 @@ export class LeadsForm {
   toastService = inject(ToastService);
   router = inject(Router);
   route: ActivatedRoute = inject(ActivatedRoute);
+  municipalitiesService: Municipalities = inject(Municipalities);
 
   @Input() leadId: string | null = null;
   @Output() close: EventEmitter<void> = new EventEmitter<void>();
 
-  statusOptions = LEAD_STATUS_OPTIONS;
+  submitted: boolean = false;
+  statusOptions: typeof LEAD_STATUS_OPTIONS = LEAD_STATUS_OPTIONS;
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (this.leadId) {
       this.leadsService
         .getLeadById(this.leadId)
@@ -61,6 +64,17 @@ export class LeadsForm {
     }
   }
 
+  municipalities = resource({
+    loader: async (): Promise<{ id: number; nome: string }[]> => {
+      const data = await this.municipalitiesService.getMunicipalities();
+      return data.map((municipality: { id: number; nome: string }) => ({
+        id: municipality.id,
+        nome: municipality.nome,
+      }));
+    },
+    defaultValue: [],
+  });
+
   leadsForm = new FormGroup({
     name: new FormControl<string>('', {
       nonNullable: true,
@@ -77,13 +91,9 @@ export class LeadsForm {
     comments: new FormControl<string>('', { nonNullable: true }),
   });
 
-  isInvalid(fieldName: string): boolean {
-    const field = this.leadsForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
-  }
-
   // Abstrair a lógica de submissão do formulário
   onSubmit(): void {
+    this.submitted = true;
     if (this.leadsForm.invalid) {
       this.leadsForm.markAllAsTouched();
       return;
@@ -101,28 +111,32 @@ export class LeadsForm {
       comments: raw.comments,
     };
 
-    const request = this.leadId
-      ? this.leadsService.updateLead(this.leadId, data)
-      : this.leadsService.createLead(data);
-
-    request
-      .then(() => {
-        if (this.leadId) {
+    if (this.leadId) {
+      this.leadsService
+        .updateLead(this.leadId, data)
+        .then((): void => {
           this.toastService.success('Sucesso', 'Cliente atualizado com sucesso.');
-        } else {
+        })
+        .catch((): void => {
+          this.toastService.error('Erro', 'Ocorreu um erro ao salvar o cliente.');
+        });
+    } else {
+      this.leadsService
+        .createLead(data)
+        .then((): void => {
           this.toastService.success('Sucesso', 'Cliente cadastrado com sucesso.');
-          this.leadsForm.reset();
-        }
-        this.close.emit();
-      })
-      .catch((error) => {
-        const messages = error?.error?.message;
-        // TODO : Padronizar retorno de erros na API
-        if (Array.isArray(messages)) {
-          messages.forEach((errMsg: string) => this.toastService.error('Erro', errMsg));
-          return;
-        }
-        this.toastService.error('Erro', 'Ocorreu um erro ao salvar o cliente.');
-      });
+        })
+        .catch((): void => {
+          this.toastService.error('Erro', 'Ocorreu um erro ao salvar o cliente.');
+        });
+    }
+
+    this.onClose();
+  }
+
+  onClose(): void {
+    this.submitted = false;
+    this.leadsForm.reset();
+    this.close.emit();
   }
 }

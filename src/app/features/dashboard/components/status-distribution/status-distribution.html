@@ -1,0 +1,16 @@
+<p-card>
+  <h4 class="text-base font-semibold mb-2">Clientes por Status</h4>
+  <div class="space-y-2">
+    @for (item of data; track $index) {
+    <div class="space-y-1">
+      <div class="flex justify-between text-sm">
+        <span>{{ item.status }}</span>
+        <span>{{ item.total }} ({{ item.percentage }}%)</span>
+      </div>
+      <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-full bg-green-500" [style.width.%]="item.percentage"></div>
+      </div>
+    </div>
+    }
+  </div>
+</p-card>

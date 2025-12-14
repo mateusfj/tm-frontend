@@ -1,0 +1,15 @@
+<p-card class="h-full">
+  <h4 class="text-base font-semibold mb-2">Top Municípios</h4>
+  <ul class="space-y-2">
+    @for (city of cities; track $index) {
+    <li class="flex items-center gap-2">
+      <span
+        class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs font-semibold"
+        >{{ $index + 1 }}</span
+      >
+      <span class="text-sm">{{ city.municipality }}</span>
+      <span class="ml-auto font-semibold">{{ city.total }}</span>
+    </li>
+    }
+  </ul>
+</p-card>

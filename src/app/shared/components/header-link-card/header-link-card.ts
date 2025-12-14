@@ -6,7 +6,7 @@ import { Button } from 'primeng/button';
   selector: 'app-header-link-card',
   standalone: true,
   imports: [RouterLink, Button],
-  templateUrl: './header-link-card.component.html',
+  templateUrl: './header-link-card.html',
 })
 export class HeaderLinkCardComponent {
   @Input({ required: true }) title!: string;

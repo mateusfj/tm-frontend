@@ -6,12 +6,11 @@ import { CommonModule } from '@angular/common';
   selector: 'app-stat-card',
   standalone: true,
   imports: [CardModule, CommonModule],
-  templateUrl: './stat-card.component.html',
-  styleUrls: ['./stat-card.component.css'],
+  templateUrl: './stat-card.html',
 })
 export class StatCardComponent {
   @Input({ required: true }) title!: string;
   @Input({ required: true }) value!: string | number;
   @Input() subtitle?: string;
-  @Input() icon?: string; // primeicons class
+  @Input() icon?: string;
 }

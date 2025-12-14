@@ -1,0 +1,32 @@
+<div class="flex flex-col gap-4">
+  <app-page-header title="Dashboard" description="Visão geral do sistema"></app-page-header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <app-header-link-card
+      title="Gerenciar Leads"
+      description="Visualize e organize seus contatos"
+      route="/leads"
+    />
+    <app-header-link-card
+      title="Propriedades Rurais"
+      description="Cadastro de fazendas e áreas"
+      route="/properties"
+    />
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    @for (item of statCards; track item.title){
+    <app-stat-card
+      [title]="item.title"
+      [value]="item.value()"
+      [subtitle]="item.subtitle"
+      [icon]="item.icon"
+    />
+    }
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <app-status-distribution [data]="leadsByStatus.value()"></app-status-distribution>
+    <app-top-cities [cities]="topCities.value()"></app-top-cities>
+  </div>
+</div>

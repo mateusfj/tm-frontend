@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { IProperty, IPropertyCreate } from '../types/properties';
+import { IProperty, IPropertyCreate, IPropertyWithLead } from '../types/properties';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +10,8 @@ import { IProperty, IPropertyCreate } from '../types/properties';
 export class PropertiesService {
   constructor(private http: HttpClient) {}
 
-  getProperties(): Promise<IProperty[]> {
-    return firstValueFrom(this.http.get<IProperty[]>(`${environment.apiUrl}/properties`));
+  getProperties(): Promise<IPropertyWithLead[]> {
+    return firstValueFrom(this.http.get<IPropertyWithLead[]>(`${environment.apiUrl}/properties`));
   }
 
   getPropertyById(id: string): Promise<IProperty> {

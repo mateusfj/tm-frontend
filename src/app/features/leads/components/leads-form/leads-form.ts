@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { CardModule } from 'primeng/card';
 import { LeadsService } from '../../services/leads-service';
-import { ILeadCreate, LeadStatusEnum } from '../../types/leads';
+import { ILeadCreate, ILeads, LeadStatusEnum } from '../../types/leads';
 import { InputMask } from 'primeng/inputmask';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
@@ -32,18 +32,18 @@ export class LeadsForm {
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
   router = inject(Router);
-  route = inject(ActivatedRoute);
+  route: ActivatedRoute = inject(ActivatedRoute);
 
   @Input() leadId: string | null = null;
-  @Output() close = new EventEmitter<void>();
+  @Output() close: EventEmitter<void> = new EventEmitter<void>();
 
   statusOptions = LEAD_STATUS_OPTIONS;
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.leadId) {
       this.leadsService
         .getLeadById(this.leadId)
-        .then((lead) => {
+        .then((lead: ILeads) => {
           this.leadsForm.setValue({
             name: lead.name,
             cpf: lead.cpf,
@@ -83,7 +83,7 @@ export class LeadsForm {
   }
 
   // Abstrair a lógica de submissão do formulário
-  onSubmit() {
+  onSubmit(): void {
     if (this.leadsForm.invalid) {
       this.leadsForm.markAllAsTouched();
       return;

@@ -7,8 +7,9 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { ToastService } from '../../../../shared/services/toast/toast.service';
 import { PropertiesForm } from '../../components/properties-form/properties-form';
 import { PropertiesService } from '../../services/properties-service';
-import { IProperty, PropertyUI } from '../../types/properties';
+import { IPropertyWithLead, PropertyUI } from '../../types/properties';
 import { CROP_LABEL_MAP } from '../../constants/crops';
+import { PROPERTY_TYPE_LABEL_MAP } from '../../constants/property-type';
 
 @Component({
   selector: 'app-properties',
@@ -24,27 +25,31 @@ export class PropertiesList {
 
   properties = resource({
     loader: async (): Promise<PropertyUI[]> => {
-      const data: IProperty[] = await this.propertiesService.getProperties();
-      return data.map((property) => ({
+      const data: IPropertyWithLead[] = await this.propertiesService.getProperties();
+      return data.map((property: IPropertyWithLead) => ({
         ...property,
         crop: CROP_LABEL_MAP[property.crop],
+        property_type: PROPERTY_TYPE_LABEL_MAP[property.property_type],
+        lead_name: property.lead.name,
       }));
     },
     defaultValue: [],
   });
 
-  columns: Array<{ field: keyof IProperty; header: string }> = [
-    { field: 'lead_id', header: 'Lead ID' },
+  columns: Array<{ field: keyof PropertyUI; header: string }> = [
+    { field: 'lead_name', header: 'Lead ID' },
+    { field: 'name', header: 'Nome' },
+    { field: 'property_type', header: 'Tipo de Propriedade' },
     { field: 'crop', header: 'Cultura' },
     { field: 'area', header: 'Área' },
-    { field: 'geometry', header: 'Geometry' },
+    { field: 'municipality', header: 'Município' },
   ];
 
-  handelShowDialog() {
+  handelShowDialog(): void {
     this.visible = true;
   }
 
-  handleClose() {
+  handleClose(): void {
     this.visible = false;
     this.properties.reload();
   }

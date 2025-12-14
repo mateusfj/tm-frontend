@@ -29,7 +29,7 @@
           <p-button
             severity="primary"
             variant="text"
-            [routerLink]="['/leads/form', rowData.id]"
+            (click)="handleEditLead(rowData.id)"
             icon="pi pi-pencil"
           />
           <p-button
@@ -41,10 +41,15 @@
         </td>
       </tr>
     </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td class="text-center!" colspan="6">Nenhum cliente encontrado.</td>
+      </tr>
+    </ng-template>
   </p-table>
 
   <!-- Dialog Form -->
   <p-dialog header="Cadastrar Cliente" [modal]="true" [(visible)]="visible">
-    <app-leads-form (close)="handleClose()"></app-leads-form>
+    <app-leads-form (close)="handleClose()" [leadId]="leadId"></app-leads-form>
   </p-dialog>
 </div>

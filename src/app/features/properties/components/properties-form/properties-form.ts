@@ -9,10 +9,11 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { ToastService } from '../../../../shared/services/toast/toast.service';
 import { PropertiesService } from '../../services/properties-service';
-import { Crop, IProperty, IPropertyCreate } from '../../types/properties';
+import { Crop, IProperty, IPropertyCreate, PropertyType } from '../../types/properties';
 import { ILeads } from '../../../leads/types/leads';
 import { LeadsService } from '../../../leads/services/leads-service';
 import { CROPS } from '../../constants/crops';
+import { PROPERTY_TYPE } from '../../constants/property-type';
 
 @Component({
   selector: 'app-properties-form',
@@ -40,6 +41,7 @@ export class PropertiesForm implements OnInit {
   @Output() close: EventEmitter<void> = new EventEmitter<void>();
 
   crops: typeof CROPS = CROPS;
+  propertyTypes: typeof PROPERTY_TYPE = PROPERTY_TYPE;
 
   leads = resource({
     loader: async (): Promise<{ label: string; value: string }[]> => {
@@ -54,6 +56,14 @@ export class PropertiesForm implements OnInit {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    name: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2)],
+    }),
+    property_type: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     crop: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(2)],
@@ -61,9 +71,9 @@ export class PropertiesForm implements OnInit {
     area: new FormControl<number | null>(null, {
       validators: [Validators.required, Validators.min(0.000001)],
     }),
-    geometry: new FormControl<string>('', {
+    municipality: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.minLength(2)],
     }),
   });
 
@@ -83,9 +93,11 @@ export class PropertiesForm implements OnInit {
         .then((property: IProperty) => {
           this.propertiesForm.setValue({
             leadId: property.lead_id,
+            name: property.name,
+            property_type: property.property_type,
             crop: property.crop,
             area: property.area,
-            geometry: property.geometry,
+            municipality: property.municipality,
           });
         })
         .catch(() => {
@@ -112,7 +124,9 @@ export class PropertiesForm implements OnInit {
       lead_id: raw.leadId,
       crop: raw.crop as Crop,
       area: raw.area as number,
-      geometry: raw.geometry,
+      name: raw.name,
+      property_type: raw.property_type as PropertyType,
+      municipality: raw.municipality,
     };
 
     const routeId = this.route.snapshot.paramMap.get('id');

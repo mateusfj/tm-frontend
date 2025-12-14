@@ -5,7 +5,6 @@ import { TableModule } from 'primeng/table';
 import { DataTableColumn } from '../../../../shared/components/data-table/data-table.types';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast/toast.service';
-import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { LEAD_STATUS_LABEL_MAP } from '../../constants/status';
 import { DialogModule } from 'primeng/dialog';
@@ -13,13 +12,15 @@ import { LeadsForm } from '../../components/leads-form/leads-form';
 @Component({
   selector: 'app-leads',
   standalone: true,
-  imports: [PageHeaderComponent, TableModule, RouterLink, Button, DialogModule, LeadsForm],
+  imports: [PageHeaderComponent, TableModule, Button, DialogModule, LeadsForm],
   templateUrl: './leads-list.html',
 })
 export class LeadsList {
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
   visible: boolean = false;
+
+  leadId: string | null = null;
 
   leads = resource({
     loader: async (): Promise<LeadUI[]> => {
@@ -32,16 +33,24 @@ export class LeadsList {
     defaultValue: [],
   });
 
-  handelShowDialog() {
+  handelShowDialog(): void {
     this.visible = true;
   }
-
-  handleClose() {
+  handleClose(): void {
     this.visible = false;
     this.leads.reload();
   }
 
-  handleDeleteLead(id: string) {
+  setLeadId(leadId: string): void {
+    this.leadId = leadId;
+  }
+
+  handleEditLead(leadId: string): void {
+    this.setLeadId(leadId);
+    this.handelShowDialog();
+  }
+
+  handleDeleteLead(id: string): void {
     this.leadsService.deleteLead(id).then(() => {
       this.toastService.success('Lead deletado com sucesso.');
       this.leads.reload();

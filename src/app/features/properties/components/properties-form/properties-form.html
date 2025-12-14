@@ -1,4 +1,21 @@
 <form class="space-y-4" [formGroup]="propertiesForm" (ngSubmit)="onSubmit()">
+  <!-- Nome -->
+  <div class="flex flex-col gap-2">
+    <label for="name" class="font-medium">Nome da Propriedade *</label>
+    <input
+      pInputText
+      type="text"
+      id="name"
+      placeholder="Nome da Propriedade"
+      formControlName="name"
+      [class.ng-invalid]="isInvalid('name')"
+    />
+    @if (isInvalid('name')) {
+    <p-message severity="error" size="small" variant="simple"
+      >Nome da Propriedade é obrigatório.</p-message
+    >
+    }
+  </div>
   <!-- Lead ID -->
   <div class="flex flex-col gap-2">
     <label for="leadId" class="font-medium">Proprietário *</label>
@@ -15,20 +32,39 @@
     >
     }
   </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Cultura -->
+    <div class="flex flex-col gap-2">
+      <label for="crop" class="font-medium">Cultura *</label>
+      <p-select
+        [options]="crops"
+        formControlName="crop"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Selecione a Cultura"
+      />
+      @if (isInvalid('crop')) {
+      <p-message severity="error" size="small" variant="simple">Cultura é obrigatória.</p-message>
+      }
+    </div>
 
-  <!-- Cultura -->
-  <div class="flex flex-col gap-2">
-    <label for="crop" class="font-medium">Cultura *</label>
-    <p-select
-      [options]="crops"
-      formControlName="crop"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Selecione a Cultura"
-    />
-    @if (isInvalid('crop')) {
-    <p-message severity="error" size="small" variant="simple">Cultura é obrigatória.</p-message>
-    }
+    <!-- Tipo -->
+
+    <div class="flex flex-col gap-2">
+      <label for="property_type" class="font-medium">Tipo de Propriedade *</label>
+      <p-select
+        [options]="propertyTypes"
+        formControlName="property_type"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Selecione o Tipo de Propriedade"
+      />
+      @if (isInvalid('property_type')) {
+      <p-message severity="error" size="small" variant="simple"
+        >Tipo de Propriedade é obrigatório.</p-message
+      >
+      }
+    </div>
   </div>
 
   <!-- Área -->
@@ -50,28 +86,20 @@
     }
   </div>
 
-  <!-- Geometry -->
+  <!-- Município -->
   <div class="flex flex-col gap-2">
-    <label for="geometry" class="font-medium">Geometry (GeoJSON) *</label>
-    <textarea
-      pTextarea
-      id="geometry"
-      rows="4"
-      placeholder='{"type":"Polygon","coordinates":[...]}'
-      formControlName="geometry"
-      [class.ng-invalid]="isInvalid('geometry')"
-    ></textarea>
-    @if (isInvalid('geometry')) { @if (propertiesForm.get('geometry')?.errors?.['required']) {
-    <p-message severity="error" size="small" variant="simple">Geometry é obrigatória.</p-message>
-    } @if (propertiesForm.get('geometry')?.errors?.['invalidJson']) {
-    <p-message severity="error" size="small" variant="simple"
-      >Geometry deve ser um JSON válido.</p-message
-    >
-    } @if (propertiesForm.get('geometry')?.errors?.['invalidPolygon']) {
-    <p-message severity="error" size="small" variant="simple"
-      >Geometry deve conter coordinates (e, se houver type, deve ser Polygon).</p-message
-    >
-    } }
+    <label for="municipality" class="font-medium">Município *</label>
+    <input
+      pInputText
+      type="text"
+      id="municipality"
+      placeholder="Município"
+      formControlName="municipality"
+      [class.ng-invalid]="isInvalid('municipality')"
+    />
+    @if (isInvalid('municipality')) {
+    <p-message severity="error" size="small" variant="simple">Município é obrigatório.</p-message>
+    }
   </div>
 
   <div class="flex gap-4">

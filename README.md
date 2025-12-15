@@ -1,59 +1,69 @@
-# TmFrontend
+## TM Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+Aplicação frontend em Angular 21, utilizando PrimeNG e Tailwind, para o teste técnico da TM Digital.
 
-## Development server
+---
 
-To start a local development server, run:
+## ✅ Pré-requisitos
 
-```bash
-ng serve
-```
+- Node.js **18+** (recomendado)
+- NPM **11+** (o projeto usa `"packageManager": "npm@11.6.2"`)
+- Git instalado (opcional, se for clonar o repositório)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Verifique suas versões com:
 
 ```bash
-ng generate component component-name
+node -v
+npm -v
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
+
+## 🚀 Instalação
+
+1. Clone o repositório (ou faça o download do código-fonte):
 
 ```bash
-ng generate --help
+git clone https://github.com/mateusfj/tm-frontend.git
+cd tm-frontend
 ```
 
-## Building
-
-To build the project run:
+2. Instale as dependências:
 
 ```bash
-ng build
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## 💻 Executar em desenvolvimento
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Use o script de desenvolvimento já configurado no `package.json`:
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+Por padrão, o Angular irá subir em:
 
-For end-to-end (e2e) testing, run:
+- URL: http://localhost:4200/
 
-```bash
-ng e2e
-```
+Qualquer alteração nos arquivos `src/` recarrega automaticamente a aplicação no navegador.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 🗂️ Estrutura geral (resumo)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `src/app/core` &rarr; layout principal (header, sidebar, etc.)
+- `src/app/features` &rarr; módulos de funcionalidade (dashboard, leads, properties)
+- `src/app/shared` &rarr; componentes compartilhados e serviços comuns
+- `src/environments` &rarr; arquivos de configuração de ambiente
+
+Caso seja necessário configurar URLs de API ou chaves específicas, ajuste os arquivos em `src/environments/` antes de rodar o build de produção.
+
+---
+
+## 🔗 Referências
+
+- Angular CLI: https://angular.dev/tools/cli
+- PrimeNG: https://primeng.org/

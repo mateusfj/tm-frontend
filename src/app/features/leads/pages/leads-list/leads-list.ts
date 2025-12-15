@@ -2,7 +2,6 @@ import { Component, inject, resource } from '@angular/core';
 import { LeadsService } from '../../services/leads-service';
 import { ILeads, LeadStatusEnum, LeadUI } from '../../types/leads';
 import { TableModule } from 'primeng/table';
-import { DataTableColumn } from '../../../../shared/components/data-table/data-table.types';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { ToastService } from '../../../../shared/services/toast/toast.service';
 import { Button } from 'primeng/button';
@@ -11,7 +10,9 @@ import { LEAD_STATUS_LABEL_MAP, LEAD_STATUS_OPTIONS } from '../../constants/stat
 import { LeadsForm } from '../../components/leads-form/leads-form';
 import { LeadsFilters } from '../../components/leads-filters/leads-filters';
 import { Card } from 'primeng/card';
-import { Municipalities } from '../../../../shared/services/municipios/municipalities';
+import { MunicipalitiesService } from '../../../../shared/services/municipios/municipalities';
+import { DataTableColumn } from '../../../../shared/types/data-table/data-table.types';
+
 @Component({
   selector: 'app-leads',
   standalone: true,
@@ -21,7 +22,7 @@ import { Municipalities } from '../../../../shared/services/municipios/municipal
 export class LeadsList {
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
-  municipalitiesService = inject(Municipalities);
+  MunicipalitiesServiceService: MunicipalitiesService = inject(MunicipalitiesService);
   visible: boolean = false;
 
   leadId: string | null = null;
@@ -32,9 +33,9 @@ export class LeadsList {
 
   statusOptions = LEAD_STATUS_OPTIONS;
 
-  municipalities = resource({
+  MunicipalitiesService = resource({
     loader: async (): Promise<Array<{ label: string; value: string }>> => {
-      const data = await this.municipalitiesService.getMunicipalities();
+      const data = await this.MunicipalitiesServiceService.getMunicipalitiesService();
       return data.map((municipality: { id: number; nome: string }) => ({
         label: municipality.nome,
         value: municipality.nome,
@@ -58,6 +59,14 @@ export class LeadsList {
     defaultValue: [],
   });
 
+  columns: DataTableColumn<LeadUI>[] = [
+    { field: 'name', header: 'Nome' },
+    { field: 'cpf', header: 'CPF' },
+    { field: 'phone', header: 'Contato' },
+    { field: 'city', header: 'Município' },
+    { field: 'status', header: 'Status' },
+  ];
+
   handelShowDialog(): void {
     this.visible = true;
   }
@@ -68,29 +77,17 @@ export class LeadsList {
     this.leads.reload();
   }
 
-  setLeadId(leadId: string): void {
-    this.leadId = leadId;
-  }
-
   handleEditLead(leadId: string): void {
-    this.setLeadId(leadId);
+    this.leadId = leadId;
     this.handelShowDialog();
   }
 
   handleDeleteLead(id: string): void {
-    this.leadsService.deleteLead(id).then(() => {
+    this.leadsService.deleteLead(id).then((): void => {
       this.toastService.success('Lead deletado com sucesso.');
       this.leads.reload();
     });
   }
-
-  columns: DataTableColumn<LeadUI>[] = [
-    { field: 'name', header: 'Nome' },
-    { field: 'cpf', header: 'CPF' },
-    { field: 'phone', header: 'Contato' },
-    { field: 'city', header: 'Município' },
-    { field: 'status', header: 'Status' },
-  ];
 
   onFiltersChange(): void {
     this.leads.reload();

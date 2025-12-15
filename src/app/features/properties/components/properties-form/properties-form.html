@@ -35,12 +35,12 @@
   <div class="flex flex-col gap-2">
     <label for="municipality" class="font-medium">Município *</label>
     <p-select
-      [options]="municipalities.value()"
+      [options]="MunicipalitiesService.value()"
       formControlName="municipality"
       optionLabel="label"
       optionValue="value"
       placeholder="Selecionar"
-      [loading]="municipalities.isLoading()"
+      [loading]="MunicipalitiesService.isLoading()"
       [showClear]="true"
     />
     @if (submitted && propertiesForm.get('municipality')?.errors?.['required']) {

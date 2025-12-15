@@ -10,9 +10,9 @@ import { InputMask } from 'primeng/inputmask';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { ToastService } from '../../../../shared/services/toast/toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { LEAD_STATUS_OPTIONS } from '../../constants/status';
-import { Municipalities } from '../../../../shared/services/municipios/municipalities';
+import { MunicipalitiesService } from '../../../../shared/services/municipios/municipalities';
 
 @Component({
   selector: 'app-leads-form',
@@ -33,8 +33,7 @@ export class LeadsForm {
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
   router = inject(Router);
-  route: ActivatedRoute = inject(ActivatedRoute);
-  municipalitiesService: Municipalities = inject(Municipalities);
+  MunicipalitiesServiceService: MunicipalitiesService = inject(MunicipalitiesService);
 
   @Input() leadId: string | null = null;
   @Output() close: EventEmitter<void> = new EventEmitter<void>();
@@ -46,7 +45,7 @@ export class LeadsForm {
     if (this.leadId) {
       this.leadsService
         .getLeadById(this.leadId)
-        .then((lead: ILeads) => {
+        .then((lead: ILeads): void => {
           this.leadsForm.setValue({
             name: lead.name,
             cpf: lead.cpf,
@@ -64,9 +63,9 @@ export class LeadsForm {
     }
   }
 
-  municipalities = resource({
+  MunicipalitiesService = resource({
     loader: async (): Promise<{ id: number; nome: string }[]> => {
-      const data = await this.municipalitiesService.getMunicipalities();
+      const data = await this.MunicipalitiesServiceService.getMunicipalitiesService();
       return data.map((municipality: { id: number; nome: string }) => ({
         id: municipality.id,
         nome: municipality.nome,
@@ -111,27 +110,24 @@ export class LeadsForm {
       comments: raw.comments,
     };
 
-    if (this.leadId) {
-      this.leadsService
-        .updateLead(this.leadId, data)
-        .then((): void => {
-          this.toastService.success('Sucesso', 'Cliente atualizado com sucesso.');
-        })
-        .catch((): void => {
-          this.toastService.error('Erro', 'Ocorreu um erro ao salvar o cliente.');
-        });
-    } else {
-      this.leadsService
-        .createLead(data)
-        .then((): void => {
-          this.toastService.success('Sucesso', 'Cliente cadastrado com sucesso.');
-        })
-        .catch((): void => {
-          this.toastService.error('Erro', 'Ocorreu um erro ao salvar o cliente.');
-        });
-    }
+    const request: Promise<ILeads> = this.leadId
+      ? this.leadsService.updateLead(this.leadId, data)
+      : this.leadsService.createLead(data);
 
-    this.onClose();
+    request
+      .then((): void => {
+        this.toastService.success(
+          'Sucesso',
+          `Cliente ${this.leadId ? 'atualizado' : 'criado'} com sucesso.`
+        );
+        this.onClose();
+      })
+      .catch((): void => {
+        this.toastService.error(
+          'Erro',
+          `Não foi possível ${this.leadId ? 'atualizar' : 'criar'} o lead.`
+        );
+      });
   }
 
   onClose(): void {

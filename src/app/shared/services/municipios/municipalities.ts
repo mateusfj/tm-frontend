@@ -6,10 +6,10 @@ import { firstValueFrom } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class Municipalities {
+export class MunicipalitiesService {
   constructor(private http: HttpClient) {}
 
-  getMunicipalities(): Promise<any> {
-    return firstValueFrom(this.http.get<string[]>(environment.municipalitiesApi));
+  getMunicipalitiesService(): Promise<any> {
+    return firstValueFrom(this.http.get<string[]>(environment.MunicipalitiesServiceApi));
   }
 }

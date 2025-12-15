@@ -16,7 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { LeadsService } from '../../../leads/services/leads-service';
 import { ILeads } from '../../../leads/types/leads';
 import { Card } from 'primeng/card';
-import { Municipalities } from '../../../../shared/services/municipios/municipalities';
+import { MunicipalitiesService } from '../../../../shared/services/municipios/municipalities';
+import { DataTableColumn } from '../../../../shared/types/data-table/data-table.types';
 
 @Component({
   selector: 'app-properties',
@@ -39,16 +40,16 @@ export class PropertiesList {
   propertiesService = inject(PropertiesService);
   leadsService = inject(LeadsService);
   toastService = inject(ToastService);
-  municipalitiesService = inject(Municipalities);
+  MunicipalitiesServiceService: MunicipalitiesService = inject(MunicipalitiesService);
 
-  visible: boolean = false;
   property_id: string | null = null;
-
-  CROPS: typeof CROPS = CROPS;
+  visible: boolean = false;
   search: string = '';
   crop?: IPropertyWithLead['crop'];
   municipality: string = '';
   lead_id: string = '';
+
+  CROPS: typeof CROPS = CROPS;
 
   leads = resource({
     loader: async (): Promise<Array<{ id: string; name: string }>> => {
@@ -58,9 +59,9 @@ export class PropertiesList {
     defaultValue: [],
   });
 
-  municipalities = resource({
+  MunicipalitiesService = resource({
     loader: async (): Promise<Array<{ label: string; value: string }>> => {
-      const data = await this.municipalitiesService.getMunicipalities();
+      const data = await this.MunicipalitiesServiceService.getMunicipalitiesService();
       return data.map((municipality: { id: number; nome: string }) => ({
         label: municipality.nome,
         value: municipality.nome,
@@ -87,7 +88,7 @@ export class PropertiesList {
     defaultValue: [],
   });
 
-  columns: Array<{ field: keyof PropertyUI; header: string }> = [
+  columns: DataTableColumn<PropertyUI>[] = [
     { field: 'name', header: 'Nome' },
     { field: 'lead_name', header: 'Proprietário' },
     { field: 'property_type', header: 'Tipo de Propriedade' },

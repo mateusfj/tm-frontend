@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, resource } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -14,7 +14,7 @@ import { ILeads } from '../../../leads/types/leads';
 import { LeadsService } from '../../../leads/services/leads-service';
 import { CROPS } from '../../constants/crops';
 import { PROPERTY_TYPE } from '../../constants/property-type';
-import { Municipalities } from '../../../../shared/services/municipios/municipalities';
+import { MunicipalitiesService } from '../../../../shared/services/municipios/municipalities';
 
 @Component({
   selector: 'app-properties-form',
@@ -35,8 +35,7 @@ export class PropertiesForm {
   propertiesService = inject(PropertiesService);
   toastService = inject(ToastService);
   router = inject(Router);
-  route: ActivatedRoute = inject(ActivatedRoute);
-  municipalitiesService: Municipalities = inject(Municipalities);
+  MunicipalitiesServiceService: MunicipalitiesService = inject(MunicipalitiesService);
 
   @Input() propertyId: string | null = null;
   @Input() leadId: string | null = null;
@@ -54,9 +53,9 @@ export class PropertiesForm {
     defaultValue: [],
   });
 
-  municipalities = resource({
+  MunicipalitiesService = resource({
     loader: async (): Promise<Array<{ label: string; value: string }>> => {
-      const data = await this.municipalitiesService.getMunicipalities();
+      const data = await this.MunicipalitiesServiceService.getMunicipalitiesService();
       return data.map((municipality: { id: number; nome: string }) => ({
         label: municipality.nome,
         value: municipality.nome,
@@ -95,7 +94,7 @@ export class PropertiesForm {
     if (this.propertyId) {
       this.propertiesService
         .getPropertyById(this.propertyId)
-        .then((property: IProperty) => {
+        .then((property: IProperty): void => {
           this.propertiesForm.setValue({
             leadId: property.lead_id,
             name: property.name,
@@ -131,28 +130,23 @@ export class PropertiesForm {
       municipality: raw.municipality,
     };
 
-    const request = this.propertyId
+    const request: Promise<IProperty> = this.propertyId
       ? this.propertiesService.updateProperty(this.propertyId, data)
       : this.propertiesService.createProperty(data);
 
     request
       .then(() => {
-        if (this.propertyId) {
-          this.toastService.success('Sucesso', 'Propriedade atualizada com sucesso.');
-        } else {
-          this.toastService.success('Sucesso', 'Propriedade cadastrada com sucesso.');
-          this.propertiesForm.reset();
-          if (this.leadId) this.propertiesForm.controls.leadId.setValue(this.leadId);
-        }
+        this.toastService.success(
+          'Sucesso',
+          `Propriedade ${this.propertyId ? 'atualizada' : 'criada'} com sucesso.`
+        );
         this.onClose();
       })
-      .catch((error) => {
-        const messages = error?.error?.message;
-        if (Array.isArray(messages)) {
-          messages.forEach((errMsg: string) => this.toastService.error('Erro', errMsg));
-          return;
-        }
-        this.toastService.error('Erro', 'Ocorreu um erro ao salvar a propriedade.');
+      .catch(() => {
+        this.toastService.error(
+          'Erro',
+          `Não foi possível ${this.propertyId ? 'atualizar' : 'criar'} a propriedade.`
+        );
       });
   }
 

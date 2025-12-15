@@ -12,6 +12,13 @@ import { LeadsByStatusItem, LeadsByStatusItemUI } from '../types/leads-by-status
 import { TopMunicipalityItem } from '../types/top-municipality.interface';
 import { LEAD_STATUS_LABEL_MAP } from '../../leads/constants/status';
 
+interface StatCard {
+  title: string;
+  subtitle: string;
+  icon: string;
+  value: () => string | number;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -51,7 +58,7 @@ export class Dashboard {
     defaultValue: [] as TopMunicipalityItem[],
   });
 
-  statCards = [
+  statCards: StatCard[] = [
     {
       title: 'Total de Leads',
       subtitle: 'Leads cadastrados no sistema',
@@ -74,7 +81,7 @@ export class Dashboard {
       title: 'Municípios',
       subtitle: 'Regiões de atuação',
       icon: 'pi pi-globe',
-      value: () => this.metrics.value()?.totalMunicipalities ?? 0,
+      value: () => this.metrics.value()?.totalMunicipalitiesService ?? 0,
     },
   ];
 }

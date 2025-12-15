@@ -18,7 +18,7 @@
     <p-select
       inputId=" municipality"
       [(ngModel)]="municipality"
-      [options]="municipalities"
+      [options]="MunicipalitiesService"
       optionLabel="label"
       optionValue="value"
       (ngModelChange)="onMunicipalityChange($event)"

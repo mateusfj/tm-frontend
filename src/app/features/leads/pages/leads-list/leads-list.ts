@@ -25,6 +25,9 @@ export class LeadsList {
   MunicipalitiesServiceService: MunicipalitiesService = inject(MunicipalitiesService);
   visible: boolean = false;
 
+  deleteDialogVisible: boolean = false;
+  leadIdToDelete: string | null = null;
+
   leadId: string | null = null;
 
   search: string = '';
@@ -83,10 +86,24 @@ export class LeadsList {
   }
 
   handleDeleteLead(id: string): void {
-    this.leadsService.deleteLead(id).then((): void => {
+    this.leadIdToDelete = id;
+    this.deleteDialogVisible = true;
+  }
+
+  confirmDeleteLead(): void {
+    if (!this.leadIdToDelete) return;
+
+    this.leadsService.deleteLead(this.leadIdToDelete).then((): void => {
       this.toastService.success('Lead deletado com sucesso.');
       this.leads.reload();
+      this.deleteDialogVisible = false;
+      this.leadIdToDelete = null;
     });
+  }
+
+  cancelDeleteLead(): void {
+    this.deleteDialogVisible = false;
+    this.leadIdToDelete = null;
   }
 
   onFiltersChange(): void {

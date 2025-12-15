@@ -44,6 +44,8 @@ export class PropertiesList {
 
   property_id: string | null = null;
   visible: boolean = false;
+  deleteDialogVisible: boolean = false;
+  propertyIdToDelete: string | null = null;
   search: string = '';
   crop?: IPropertyWithLead['crop'];
   municipality: string = '';
@@ -113,10 +115,24 @@ export class PropertiesList {
   }
 
   handleDeleteProperty(id: string) {
-    this.propertiesService.deleteProperty(id).then(() => {
+    this.propertyIdToDelete = id;
+    this.deleteDialogVisible = true;
+  }
+
+  confirmDeleteProperty(): void {
+    if (!this.propertyIdToDelete) return;
+
+    this.propertiesService.deleteProperty(this.propertyIdToDelete).then(() => {
       this.toastService.success('Propriedade deletada com sucesso.');
       this.properties.reload();
+      this.deleteDialogVisible = false;
+      this.propertyIdToDelete = null;
     });
+  }
+
+  cancelDeleteProperty(): void {
+    this.deleteDialogVisible = false;
+    this.propertyIdToDelete = null;
   }
 
   onFiltersChange(): void {

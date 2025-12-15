@@ -77,4 +77,20 @@
   >
     <app-properties-form [propertyId]="property_id" (close)="handleClose()"></app-properties-form>
   </p-dialog>
+
+  <!-- Delete Confirmation Dialog -->
+  <p-dialog
+    header="Confirmar exclusão"
+    [modal]="true"
+    [(visible)]="deleteDialogVisible"
+    [closable]="false"
+    [style]="{ width: '400px' }"
+  >
+    <p class="text-muted-color">Tem certeza que deseja excluir esta propriedade?</p>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <p-button label="Cancelar" severity="secondary" (click)="cancelDeleteProperty()" />
+      <p-button label="Confirmar" severity="danger" (click)="confirmDeleteProperty()" />
+    </div>
+  </p-dialog>
 </div>

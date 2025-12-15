@@ -1,4 +1,4 @@
-<div class="flex items-center justify-between">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
   <div>
     <h1 class="text-3xl font-bold text-gray-900">
       {{ title }}
@@ -10,12 +10,14 @@
     }
   </div>
   @if (onAction) {
-  <p-button
-    icon="pi pi-plus"
-    [label]="buttonLabel"
-    severity="primary"
-    rounded
-    (click)="onAction()"
-  />
+  <div class="flex justify-start md:justify-end items-center">
+    <p-button
+      icon="pi pi-plus"
+      [label]="buttonLabel"
+      severity="primary"
+      rounded
+      (click)="onAction()"
+    />
+  </div>
   }
 </div>
